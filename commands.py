@@ -1,3 +1,4 @@
+import shutil
 import click
 import os
 from click_shell import shell
@@ -52,7 +53,7 @@ def list_of_commands() :
 
 
 """
------------------ Working With Files And Directories -------------
+----------------- Working With Files -------------
 """
 
 @shell_script.command(name = '--lt')
@@ -128,3 +129,98 @@ def rename_file(old_name, new_name) :
     except Exception as e:
         click.echo(f"Error renaming file '{old_name}': {e}")
 
+
+"""
+--------------------------------- Working With Directories -----------------------------
+"""
+
+# Move to a directory
+
+
+@shell_script.command(name = 'cd')
+@click.option("-d" , prompt="Enter the directory name to change to", type=str, required=False)
+def change_directory(d) :
+    """
+    Change the current working directory to the specified directory.
+    """
+    
+    try:
+        os.chdir(d)
+        click.echo(f"Changed directory to '{d}' successfully.")
+    except FileNotFoundError:
+        click.echo(f"Directory '{d}' does not exist.")
+    except Exception as e:
+        click.echo(f"Error changing directory: {e}")
+
+
+# back from current directory
+@shell_script.command(name = '--back')
+def back_directory() :
+    """
+    Change the current working directory to the parent directory.
+    """
+    
+    try:
+        os.chdir('..')
+        click.echo("Changed directory to the parent directory successfully.")
+    except Exception as e:
+        click.echo(f"Error changing to parent directory: {e}")
+
+# Creating a new directory
+
+@shell_script.command(name = "--md")
+@click.option("-d", prompt="Enter the directory name", type=str, required=False)
+def create_directory(d) :
+    """
+    Create a new directory with the specified name.
+    """
+    
+    if os.path.exists(d):
+        click.echo(f"Directory '{d}' already exists.")
+        return
+    
+    try:
+        os.makedirs(d)
+        click.echo(f"Directory '{d}' created successfully.")
+    except Exception as e:
+        click.echo(f"Error creating directory '{d}': {e}")
+
+
+# Deleting a directory
+
+@shell_script.command(name = "--rd")
+@click.option("-d", prompt="Enter the directory name to delete", type=str, required=False)
+def delete_directory(d) :
+    """
+    Delete a directory with the specified name.
+    """
+    
+    if not os.path.exists(d):
+        click.echo(f"Directory '{d}' does not exist.")
+        return
+    
+    try:
+        shutil.rmtree(d)
+        click.echo(f"Directory '{d}' deleted successfully.")
+    except Exception as e:
+        click.echo(f"Error deleting directory '{d}': {e}")
+
+
+# renaming a Directory 
+@shell_script.command(name = "--rdn")
+@click.option("--old_name", prompt="Enter the old directory name", type=str, required=False)
+@click.option("--new_name", prompt="Enter the new directory name", type=str, required=False)
+def rename_directory(old_name, new_name) :
+    """
+    Rename a directory from old_name to new_name.
+    """
+    
+    if not os.path.exists(old_name):
+        click.echo(f"Directory '{old_name}' does not exist.")
+        return
+    
+    try:
+        os.rename(old_name, new_name)
+        click.echo(f"Directory '{old_name}' renamed to '{new_name}' successfully.")
+    except Exception as e:
+        click.echo(f"Error renaming directory '{old_name}': {e}")
