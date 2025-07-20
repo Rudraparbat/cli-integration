@@ -2,6 +2,7 @@ import shutil
 import click
 import os
 from click_shell import shell
+from app.ai import AiChatAgent
 
 """
 Initialize The Shell Script
@@ -224,3 +225,30 @@ def rename_directory(old_name, new_name) :
         click.echo(f"Directory '{old_name}' renamed to '{new_name}' successfully.")
     except Exception as e:
         click.echo(f"Error renaming directory '{old_name}': {e}")
+
+
+"""
+------------------ Working with ai implementation -------------------
+"""
+
+@shell_script.command(name = "ai")
+@click.argument("p", nargs = -1 , required=True)
+def ask_to_ai(p) :
+    """
+    It Asks The Ai For The Answer
+    """
+    try :
+
+        chatagent = AiChatAgent()
+        response = chatagent.ask(p)
+        if response:
+            click.echo(f"AI Response: {response}")
+        else:
+            click.echo("Failed to get a response from the AI.")
+
+    except ValueError as ve:
+        click.echo(f"ValueError: {ve}")
+
+    except Exception as e:
+        click.echo(f"An error occurred while interacting with the AI: {e}")
+
