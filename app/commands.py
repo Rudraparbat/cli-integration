@@ -2,6 +2,8 @@ import shutil
 import click
 import os
 from click_shell import shell
+import subprocess
+import shlex
 from app.ai import AiChatAgent
 
 """
@@ -226,6 +228,38 @@ def rename_directory(old_name, new_name) :
     except Exception as e:
         click.echo(f"Error renaming directory '{old_name}': {e}")
 
+
+"""
+---------------------------------- Working With Base Commands ----------------------------
+"""
+
+# It only supports git command for now.
+@shell_script.command(name = "any")
+@click.argument('c', nargs=-1, required=True)
+def any_command(c) :
+    """
+    Placeholder for any command.
+    """
+    supported_commands = {
+        "git" : True ,
+    }
+
+    if c[0] in supported_commands: 
+        try :
+           
+            result = subprocess.run(c, capture_output=True, text=True, check=True)
+            if result.stdout:
+                click.echo(result.stdout)
+
+            if result.stderr:
+                click.echo(result.stderr)
+
+        except Exception as e:
+            click.echo(f"Error executing command '{c}': {e}")
+
+    else :
+        click.echo(f"Command '{c}' is not supported in this shell script. Please use a supported command.")
+        click.echo("Supported commands: " + ", ".join(supported_commands.keys()))
 
 """
 ------------------ Working with ai implementation -------------------
