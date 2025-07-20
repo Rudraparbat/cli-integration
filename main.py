@@ -1,4 +1,4 @@
-from commands import shell_script
+from app.commands import shell_script
 
 
 if __name__ == "__main__":

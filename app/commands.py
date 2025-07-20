@@ -4,6 +4,7 @@ import os
 from click_shell import shell
 import subprocess
 import shlex
+from app.ai import AiChatAgent
 
 """
 Initialize The Shell Script
@@ -260,5 +261,28 @@ def any_command(c) :
         click.echo(f"Command '{c}' is not supported in this shell script. Please use a supported command.")
         click.echo("Supported commands: " + ", ".join(supported_commands.keys()))
 
+"""
+------------------ Working with ai implementation -------------------
+"""
 
+@shell_script.command(name = "ai")
+@click.argument("p", nargs = -1 , required=True)
+def ask_to_ai(p) :
+    """
+    It Asks The Ai For The Answer
+    """
+    try :
+
+        chatagent = AiChatAgent()
+        response = chatagent.ask(p)
+        if response:
+            click.echo(f"AI Response: {response}")
+        else:
+            click.echo("Failed to get a response from the AI.")
+
+    except ValueError as ve:
+        click.echo(f"ValueError: {ve}")
+
+    except Exception as e:
+        click.echo(f"An error occurred while interacting with the AI: {e}")
 
